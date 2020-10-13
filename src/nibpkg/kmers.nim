@@ -168,7 +168,7 @@ proc dna_to_kmers*(sq: Dna; k: int): pot_t =
         if lk >= k:
             inc(n, 2)
             kmers.seeds.add(forward_kmer)
-            kmers.seeds.add(reverse_kmer)
+            #kmers.seeds.add(reverse_kmer)
             inc(forward_kmer.pos, 1)
             inc(reverse_kmer.pos, 1)
         inc(i)

@@ -17,14 +17,12 @@ suite "kmers":
         check kmers.bin_to_dna(0b10001111000100, 7, kmers.reverse) == "TGTAATC"
 
     test "dna_to_kmers":
-        check kmers.dna_to_kmers("AAAA", 2).seeds.len() == 6
+        check kmers.dna_to_kmers("AAAA", 2).seeds.len() == 3
 
     test "sorted_kmers":
         let
             sq = "ATCGGCTACTATT"
             expected = [
-                "TCGGCTACTATT",
-                "ATCGGCTACTAT",
                 "ATCGGCTACTAT",
                 "TCGGCTACTATT",
             ]
@@ -49,10 +47,10 @@ suite "kmers":
             kms = kmers.dna_to_kmers(sq, k)
         let spot = kmers.initSpot(kms)
         let hits = kmers.search(spot, qms)
-        check hits.len() == 4
+        check hits.len() == 2
         #check sets.toSet(seqUtils.toSeq(hits)).len() == 4 # 4 unique items
         check sets.len(sets.toHashSet(seqUtils.toSeq(deques.items(hits)))) ==
-                4 # same as above
+                2 # same as above
 
 suite "kmers difference":
     let
@@ -65,16 +63,16 @@ suite "kmers difference":
         var qms: kmers.pot_t
         deepCopy(qms, kms)
         check qms[] == kms[]
-        check kmers.nkmers(qms) == 4
-        check kmers.nkmers(kms) == 4
+        check kmers.nkmers(qms) == 2
+        check kmers.nkmers(kms) == 2
         let qspot = kmers.initSpot(qms)
         check qms == nil
 
         let kms0 = kmers.difference(kms, qspot)
 
         check kmers.nkmers(kms0) == 0
-        check kmers.nkmers(kms) == 4
-        check kmers.nkmers(qspot) == 4
+        check kmers.nkmers(kms) == 2
+        check kmers.nkmers(qspot) == 2
 
         let
             expected: array[0, string] = []
@@ -88,14 +86,14 @@ suite "kmers difference":
         var orig: kmers.pot_t
         deepCopy(orig, kms)
         check kmers.nkmers(qms) == 0
-        check kmers.nkmers(kms) == 4
+        check kmers.nkmers(kms) == 2
         let qspot = kmers.initSpot(qms)
         check qms == nil
 
         let kms4 = kmers.difference(kms, qspot)
 
-        check kmers.nkmers(kms4) == 4
-        check kmers.nkmers(kms) == 4
+        check kmers.nkmers(kms4) == 2
+        check kmers.nkmers(kms) == 2
         let got = kmers.get_dnas(kms4)
         let expected = kmers.get_dnas(orig)
         check got == expected
@@ -104,9 +102,7 @@ suite "kmer order":
     let dna = "ATGCGGACAGAAATATATACATAGAGACATACTCCCNAAAAAAAACTCAGAAGACACACATGCGCCC"
     let kms = kmers.dna_to_kmers(dna, 11)
 
-    test "paired position of neg/pos strand":
-        for i in countup(0, kms.seeds.len - 2, 2):
-            check kms.seeds[i + 0].pos == kms.seeds[i + 1].pos
+
 
     test "increasing position":
         var lv: uint32 = 0
